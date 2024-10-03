@@ -67,17 +67,14 @@ void ar_log_init(void)
 }
 
 _IRQL_requires_max_(DISPATCH_LEVEL)
-void ar_log(uint32_t level, const char_t* log_tag, const char_t* file,
-        const char_t* fn, int32_t ln, const char_t* format, ...)
+static void ar_log_va(uint32_t level, const char_t* log_tag, const char_t* file,
+        const char_t* fn, int32_t ln, const char_t* format, va_list ap)
 {
-    va_list ap;
     char buf_temp[LOG_BUF_SIZE];
     char buf[LOG_BUF_SIZE];
 
-    va_start(ap, format);
     snprintf(buf_temp, LOG_BUF_SIZE, "%s:%s:%d %s", file, fn, ln, format);
     vsnprintf(buf, LOG_BUF_SIZE, buf_temp, ap);
-    va_end(ap);
 
     if (level == AR_DEBUG) {
         __android_log_write(ANDROID_LOG_DEBUG, log_tag, buf);
@@ -92,6 +89,32 @@ void ar_log(uint32_t level, const char_t* log_tag, const char_t* file,
     else if (level == AR_CRITICAL) {
         __android_log_write(ANDROID_LOG_FATAL, log_tag, buf);
     }
+}
+
+_IRQL_requires_max_(DISPATCH_LEVEL)
+void ar_log(uint32_t level, const char_t* log_tag, const char_t* file,
+        const char_t* fn, int32_t ln, const char_t* format, ...)
+{
+    va_list ap;
+    char buf_temp[LOG_BUF_SIZE];
+    char buf[LOG_BUF_SIZE];
+
+    va_start(ap, format);
+    ar_log_va(level, log_tag, file, fn, ln, format, ap);
+    va_end(ap);
+}
+
+_IRQL_requires_max_(DISPATCH_LEVEL)
+void ar_log_old(uint32_t level, const char_t* log_tag, const char_t* fn,
+        int32_t ln, const char_t* format, ...)
+{
+    va_list ap;
+    char buf_temp[LOG_BUF_SIZE];
+    char buf[LOG_BUF_SIZE];
+
+    va_start(ap, format);
+    ar_log_va(level, log_tag, "<unknown source file>", fn, ln, format, ap);
+    va_end(ap);
 }
 
 _IRQL_requires_max_(DISPATCH_LEVEL)
