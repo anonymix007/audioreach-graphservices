@@ -332,6 +332,9 @@ end:
 *  servreg_handle on success.
 *  null on failure.
 */
+
+static int nopd = 42;
+
 _IRQL_requires_max_(PASSIVE_LEVEL)
 ar_osal_servreg_t ar_osal_servreg_register(_In_ ar_osal_client_type  client_type __unused,
     _In_opt_ ar_osal_servreg_callback cb_func,
@@ -340,7 +343,7 @@ ar_osal_servreg_t ar_osal_servreg_register(_In_ ar_osal_client_type  client_type
     _In_ ar_osal_servreg_entry_type *service)
 {
 #ifndef AR_OSAL_USE_PD_NOTIFIER
-    return NULL;
+    return &nopd;
 #else
     int32_t status = AR_EOK;
     //ar_osal_servreg_t* handle = NULL;
