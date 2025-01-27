@@ -1,0 +1,13 @@
+cc_library_headers {
+    name: "libspf-headers",
+    vendor: true,
+    proprietary: true,
+    cflags: ["-D__H2XML__"],
+    export_include_dirs: [
+        "api",
+        "api/apm",
+        "api/ar_utils",
+        "api/modules",
+        "api/vcpm",
+    ],
+}
